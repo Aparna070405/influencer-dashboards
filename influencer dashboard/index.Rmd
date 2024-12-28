@@ -1,0 +1,530 @@
+---
+title: "Influencer dashboards for digital marketting"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(highcharter)
+library(gt)
+library(htmltools)
+library(viridis)
+library(dplyr)
+
+```
+
+```{r}
+dataframe<-read.csv("dashboarddata.csv")
+facebook<-read.csv("facebookdata.csv")
+twitter<-read.csv("twitter.dataset.csv")
+youtube<-read.csv("YouTube.csv")
+growthoveryears<-read.csv("Book-5.csv")
+view(youtube)
+```
+
+# Instagram Data
+
+## Column {.tabset .tabset-fade data-width="650"}
+
+### Top Influencers of 2023
+
+```{r}
+custom_colors <- viridis::plasma(n = 20)
+
+dataframe %>%
+  group_by(Username.of.the.Instagrammer) %>%
+  summarise(Number.of.followers.of.the.user = sum(Number.of.followers.of.the.user)) %>%
+  arrange(desc(Number.of.followers.of.the.user)) %>%
+  head(20) %>%
+  hchart("column", hcaes(x = Username.of.the.Instagrammer, y = Number.of.followers.of.the.user, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of followers: </b> {point.y} <br>') %>%
+  hc_title(text = "Most popular influencer of 2023",
+           style = list(color = "purple",fontSize = "25px", fontWeight = "bold")) %>%
+  hc_subtitle(text = "By Number of Followers",
+              style = list(color = '#001A9E',fontSize = "16px"))
+  
+```
+
+### Most popular instagrammer
+
+```{r}
+custom_colors <- viridis::turbo(n = 20)
+
+dataframe %>%
+  group_by(Username.of.the.Instagrammer) %>%
+  summarise(Influence.score.of.the.users = sum(Influence.score.of.the.users)) %>%
+  arrange(desc(Influence.score.of.the.users)) %>%
+  head(20) %>%
+  hchart("lollipop", hcaes(y = Influence.score.of.the.users,x = Username.of.the.Instagrammer, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>influencer score: </b> {point.y} <br>') %>%
+  hc_title(text = "Most popular influencer of 2023",
+           style = list(color = "red",fontSize = "25px", fontWeight = "bold")) %>%
+  hc_subtitle(text = "By Number of influencer score",
+              style = list(color = "darkblue",fontSize = "16px"))
+```
+
+## Column {data-width="350"}
+
+###  {.no-padding}
+
+```{r}
+coustum_colur<-viridis::magma(n=7)
+
+dataframe %>%
+  group_by(country) %>%
+  summarise(count=n()) %>%
+  hchart("pie",hcaes(x=country,y=count,color=coustum_colur)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat="<b>Proportion: </b> {point.percentage:,.2f}% ") %>%
+  hc_title(text="Country of origin",
+              style=list(color = "#4967FF",fontSize="16xp" ,fontWeight='bold'))
+  
+
+  
+  
+ 
+  
+  
+```
+
+###  {.no-padding}
+
+```{r}
+df2<-dataframe %>%
+  filter(Total.likes..in.Billion.>=1) %>%
+  arrange(desc(Total.likes..in.Billion.)) %>%
+  select(Username.of.the.Instagrammer,Total.likes..in.Billion.) 
+
+div(style='height:600px;overflow-y:scroll',gt(df2) %>%
+      tab_header(title=md('Best influencers of 2023'),
+                 subtitle = md('By total number of likes')) %>%
+      opt_table_font(font=list(google_font('Chivo'),default_fonts())) %>%
+      tab_style(location=cells_column_labels(columns=everything()),
+                style = list(cell_borders(sides='bottom',
+                                          weight=px(2)),
+                             cell_text(weight = 'bold'))) %>%
+      tab_options(table.font.size=px(12L),
+                  table.border.top.style='none',
+                  column_labels.border.bottom.width=2,
+                  table_body.border.top.style='none',
+                  data_row.padding=px(3))
+)
+```
+
+# Followers data
+
+## column {.tabset .tabset-fade data-width="650"}
+
+### Engagement rate of the followers
+
+```{r}
+custom_colors <- viridis::viridis(n = 20)
+
+dataframe %>%
+  group_by(Username.of.the.Instagrammer) %>%
+  summarise(engagement.rate = sum(engagement.rate)) %>%
+  arrange(desc(engagement.rate)) %>%
+  head(20) %>%
+  hchart("column", hcaes(x = Username.of.the.Instagrammer, y = engagement.rate, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>engagenent rate: </b> {point.y} <br>') %>%
+  hc_title(text = "Engagement rate of the followers",
+           style = list(color = "steelblue",fontSize = "25px", fontWeight = "bold")) %>%
+  hc_subtitle(text = "in last 60 days ",
+              style = list(color = "brown",fontSize = "16px"))
+
+```
+
+```{r}
+dataframe1<-read.csv("Book.csv")
+```
+
+## Column {data-width="350"}
+
+###  {.no-padding}
+
+```{r}
+coustum_colur<-viridis::turbo(n=7)
+dataframe1 %>%
+  group_by(age.group.of.the.users) %>%
+  summarise(percentage=n()) %>%
+  hchart("pie",hcaes(x=age.group.of.the.users,y = percentage,color=coustum_colur)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat="<b>Percentage: </b> {point.percentage:,.2f}% ") %>%
+  hc_title(text="Age group of the Followers",
+              style=list(color = "deeppink",fontSize="16xp" ,fontWeight='bold'))
+
+```
+
+###  {.no-padding}
+
+```{r}
+
+df2<-dataframe %>%
+  filter(Average.likes.on.instagrammer.posts>=1) %>%
+  arrange(desc(Average.likes.on.instagrammer.posts)) %>%
+  select(Username.of.the.Instagrammer,Average.likes.on.instagrammer.posts) 
+
+div(style='height:600px;overflow-y:scroll',gt(df2) %>%
+      tab_header(title=md('Average likes on a post of instagrammer'),
+                 subtitle = md('By the followers')) %>%
+      opt_table_font(font=list(google_font('Chivo'),default_fonts())) %>%
+      tab_style(location=cells_column_labels(columns=everything()),
+                style = list(cell_borders(sides='bottom',
+                                          weight=px(2)),
+                             cell_text(weight = 'bold'))) %>%
+      tab_options(table.font.size=px(12L),
+                  table.border.top.style='none',
+                  column_labels.border.bottom.width=2,
+                  table_body.border.top.style='none',
+                  data_row.padding=px(3))
+)
+
+```
+
+# Facebook and twitter data
+
+## row {data-width="350"}
+
+###  {.no-padding}
+
+```{r}
+
+custom_colors <- viridis::turbo(n = 10)
+
+twitter %>%
+  group_by(Name) %>%
+  summarise(Number.of.followers = sum(Followers)) %>%
+  arrange(desc(Number.of.followers)) %>%
+  head(20) %>%
+  hchart("column", hcaes(x = Name, y = Number.of.followers, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of followers: </b> {point.y} <br>') %>%
+  hc_title(text = "Number of followers",
+           style = list(color = "steelblue",fontSize = "25px", fontWeight = "bold")) %>%
+  hc_subtitle(text = "in twitter ",
+              style = list(color = "brown",fontSize = "16px"))
+
+
+
+```
+
+###  {.no-paddind}
+
+```{r}
+
+custom_colors <- viridis::cividis(n = 10)
+
+
+twitter %>%
+  group_by(Name) %>%
+  summarise(numbers.of.tweets = sum(Followers)) %>%
+  arrange(desc(numbers.of.tweets)) %>%
+  head(20) %>%
+  hchart("lollipop", hcaes(x = Name, y = numbers.of.tweets, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of twitters: </b> {point.y} <br>') %>%
+  hc_title(text = " Number of tweets",
+           style = list(color = "#87866D",fontSize = "25px", fontWeight = "bold")) %>%
+  hc_subtitle(text = "By the user",
+              style = list(color = "brown",fontSize = "16px"))
+
+
+```
+
+## Column {data-width="350"}
+
+###  {.no-padding}
+
+```{r}
+custom_colors <- viridis::mako(n = 14)
+
+facebook %>%
+  group_by(Name) %>%
+  summarise(average_engagement_rate = mean(Average.engagement.rate)) %>%
+  arrange(desc(average_engagement_rate)) %>%
+  head(14) %>%
+  hchart("bar", hcaes(x = Name, y = average_engagement_rate, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Engagement Rate:</b> {point.y} <br>') %>%
+  hc_title(
+    text = "Average Engagement Rate",
+    style = list(color = "#878", fontSize = "25px", fontWeight = "bold")
+  ) %>%
+  hc_subtitle(
+    text = "on Facebook",
+    style = list(color = "#cd3", fontSize = "16px")
+  )
+
+
+```
+
+###  {.no-padding}
+
+```{r}
+custom_colors <- viridis::viridis(n = 14)
+
+
+facebook %>%
+  group_by(Name) %>%
+  summarise(Reach.of.the.influencer = sum(Reach)) %>%
+  top_n(14, wt = Reach.of.the.influencer) %>%
+  hchart("bar", hcaes(x = Name, y = Reach.of.the.influencer, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Reach of the influencer:</b> {point.y} <br>') %>%
+  hc_title(
+    text = "Reach of the Influencer",
+    style = list(color = "#ED68ED", fontSize = "25px", fontWeight = "bold")
+  ) %>%
+  hc_subtitle(
+    text = "on Facebook",
+    style = list(color = "blue", fontSize = "16px")
+  )
+
+
+```
+
+## Column {data-width="350"}
+
+###  {.no-padding}
+
+```{r}
+coustum_colur<-viridis::mako(n=5)
+
+twitter %>%
+  group_by(Country) %>%
+  summarise(count=n()) %>%
+  hchart("pie",hcaes(x=Country,y=count,color=coustum_colur)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat="<b>Proportion: </b> {point.percentage:,.2f}% ") %>%
+  hc_title(text="country of the twitter influencer",
+              style=list(color = "darkred",fontSize="24xp" ,fontWeight='bold'))
+
+```
+
+###  {.no-padding}
+
+```{r}
+coustum_colur<-viridis::plasma(n=8)
+
+facebook %>%
+  group_by(Country) %>%
+  summarise(count=n()) %>%
+  hchart("pie",hcaes(x=Country,y=count,color=coustum_colur)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat="<b>Proportion: </b> {point.percentage:,.2f}% ") %>%
+  hc_title(text="country of the facebook influencer",
+              style=list(color = "darkgreen",fontSize="24xp" ,fontWeight='bold'))
+
+
+```
+
+
+
+
+
+
+YouTube Data
+=====================================================================
+Column {.tabset .tabset-fade data-width="750"}
+---------------------------------------------------------------------
+### Number of subcribers
+```{r}
+custom_colors <- viridis::cividis(n = 30)
+
+
+youtube %>%
+  group_by(youtuber.name) %>%
+  summarise(Number.of.subcribers = sum(number.of.subcribers)) %>%
+  top_n(30, wt = Number.of.subcribers) %>%
+  hchart("lollipop", hcaes(x = youtuber.name, y = Number.of.subcribers, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of users :</b> {point.y} <br>') %>%
+  hc_title(
+    text = "Number of subcribers",
+    style = list(color = "darkred", fontSize = "25px", fontWeight = "bold")
+  ) %>%
+  hc_subtitle(
+    text = "in millon",
+    style = list(color = "blue", fontSize = "16px")
+  )
+
+```
+
+### Total number of views
+```{r}
+
+custom_colors <- viridis::rocket(n = 31)
+
+youtube %>%
+  group_by(youtuber.name) %>%
+  summarise(Number_of_views = sum(total.views)) %>%
+  hchart("column", hcaes(x = youtuber.name, y = Number_of_views, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of views:</b> {point.y} <br>') %>%
+  hc_title(
+    text = "Number of total views",
+    style = list(color = "#ED6", fontSize = "25px", fontWeight = "bold")
+  ) %>%
+  hc_subtitle(
+    text = "on YouTube(in billion)",
+    style = list(color = "skyblue", fontSize = "16px")
+  )
+
+```
+
+column {data-width="350"}
+---------------------------------------------------------------------
+### {.no-padding}
+```{r}
+library(highcharter)
+library(viridis)
+
+# Assuming 'youtube' is your data frame
+custom_colors <- viridis::rocket(n = 8)
+
+youtube %>%
+  group_by(country) %>%
+  summarise(count = n()) %>%
+  hchart("pie", hcaes(x = country, y = count, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = "<b>Proportion:</b> {point.percentage:,.2f}% ") %>%
+  hc_title(
+    text = "Country of the YouTubers",
+    style = list(color = "darkgreen", fontSize = "16px", fontWeight = 'bold')
+  )
+
+
+
+```
+
+
+### {.no-padding}
+```{r}
+custom_colors <- viridis::plasma(n = 9)
+
+
+youtube %>%
+  group_by(category) %>%
+  summarise(count = n()) %>%
+  hchart("pie", hcaes(x = category, y = count, color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = "<b>Proportion:</b> {point.percentage:,.2f}% ") %>%
+  hc_title(
+    text = "Category of the YouTubers",
+    style = list(color = "deeppink", fontSize = "16px", fontWeight = 'bold')
+  )
+
+```
+
+
+Growth of app users through years
+=======================================================================
+Column {data-width="500"}
+---------------------------------------------------------------------
+### {.no-padding}
+```{r}
+custom_colors <- viridis::viridis(n = 14)
+
+
+growthoveryears %>%
+  group_by(years) %>%
+  summarise(instagram.users. = sum(instagram.users)) %>%
+  top_n(14, wt = instagram.users.) %>%
+  hchart("line", hcaes(x = years, y = instagram.users., color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of users :</b> {point.y} <br>') %>%
+  hc_title(
+    text = "Number of users of instagram",
+    style = list(color = "#E68613", fontSize = "25px", fontWeight = "bold")
+  ) %>%
+  hc_subtitle(
+    text = "over years(in millon)",
+    style = list(color = "darkgreen", fontSize = "16px")
+  )
+
+
+```
+
+### {.no-padding}
+```{r}
+custom_colors <- viridis::turbo(n = 14)
+
+
+growthoveryears %>%
+  group_by(years) %>%
+  summarise(Twitter.users. = sum(twitter.users)) %>%
+  top_n(14, wt = Twitter.users.) %>%
+  hchart("line", hcaes(x = years, y = Twitter.users., color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of users :</b> {point.y} <br>') %>%
+  hc_title(
+    text = "Number of users of Twitter",
+    style = list(color = "#00A9FF", fontSize = "25px", fontWeight = "bold")
+  ) %>%
+  hc_subtitle(
+    text = "over years (in millon)",
+    style = list(color = "#F8766D", fontSize = "16px")
+  )
+
+```
+
+
+column {data-width="500"}
+------------------------------------------------------------------------
+### {.no-padding}
+```{r}
+custom_colors <- viridis::inferno(n = 14)
+
+
+growthoveryears %>%
+  group_by(years) %>%
+  summarise(Facebook.users. = sum(facebook.users)) %>%
+  top_n(14, wt = Facebook.users.) %>%
+  hchart("line", hcaes(x = years, y = Facebook.users., color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of users :</b> {point.y} <br>') %>%
+  hc_title(
+    text = "Number of users of Facebook",
+    style = list(color = "#FF68A1", fontSize = "25px", fontWeight = "bold")
+  ) %>%
+  hc_subtitle(
+    text = "over years (in millon)",
+    style = list(color = "orange", fontSize = "16px")
+  )
+
+
+
+```
+
+### {.no-padding}
+```{r}
+custom_colors <- viridis::rocket(n = 14)
+
+
+growthoveryears %>%
+  group_by(years) %>%
+  summarise(Youtube.users. = sum(youtube.users)) %>%
+  top_n(14, wt = Youtube.users.) %>%
+  hchart("line", hcaes(x = years, y = Youtube.users., color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of users :</b> {point.y} <br>') %>%
+  hc_title(
+    text = "Number of users of Youtube",
+    style = list(color = "#00BFC4", fontSize = "25px", fontWeight = "bold")
+  ) %>%
+  hc_subtitle(
+    text = "over years (in billion)",
+    style = list(color = "#8494FF", fontSize = "16px")
+  )
+
+```
+
+
+
